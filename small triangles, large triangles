@@ -8,28 +8,30 @@ struct triangle
 	int b;
 	int c;
 };
-
-typedef struct triangle triangle;
-double calculate_area(triangle tr) {
-    double s = (tr.a + tr.b + tr.c) / 2.0; // semi-perimeter
-    return sqrt(s * (s - tr.a) * (s - tr.b) * (s - tr.c));
-}
-
-// Comparison function for sorting triangles by area
-int compare(const void* a, const void* b) {
-    triangle tr1 = *(triangle*)a;
-    triangle tr2 = *(triangle*)b;
-    
-    double area1 = calculate_area(tr1);
-    double area2 = calculate_area(tr2);
-    
-    if (area1 < area2) return -1; // tr1 comes before tr2
-    if (area1 > area2) return 1;  // tr1 comes after tr2
-    return 0; // areas are equal
-}
-
+typedef struct triangle triangle ;
 void sort_by_area(triangle* tr, int n) {
-	qsort(tr, n, sizeof(triangle), compare);
+    double area[n];
+    for(int i=0;i<n;i++)
+    {
+        double a=tr[i].a,b=tr[i].b,c=tr[i].c;
+        double s=(a+b+c)/2.0;
+        area[i]=s*(s-a)*(s-b)*(s-c);
+    }
+    for(int i=0;i<n-1;i++){
+        for(int j=0;j<n-i-1;j++)
+        {
+            if(area[j]>area[j+1]) {
+                double temp_area=area[j];
+                area[j] = area[j + 1];
+                area[j + 1] = temp_area;
+
+                // swap triangles
+                triangle temp = tr[j];
+                tr[j] = tr[j + 1];
+                tr[j + 1] = temp;
+            }
+        }
+    }
 }
 int main()
 {
